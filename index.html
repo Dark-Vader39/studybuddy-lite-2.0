@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#7c3aed" />
+  <title>StudyBuddy Lite</title>
+
+  <!-- Google Font: Hindi-friendly -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================
+       GLOBAL STYLES
+    ========================== */
+    :root {
+      --purple: #7c3aed;
+      --purple-dark: #5b21b6;
+      --pink: #ec4899;
+      --yellow: #fbbf24;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --red: #ef4444;
+      --orange: #f97316;
+      --ink: #202034;
+      --muted: #6b7280;
+      --card: rgba(255,255,255,.94);
+      --bg: #f5f3ff;
+      --shadow: 0 15px 40px rgba(76,29,149,.14);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans Devanagari", "Poppins", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(236,72,153,.18), transparent 25%),
+        radial-gradient(circle at 90% 15%, rgba(59,130,246,.18), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(124,58,237,.15), transparent 30%),
+        var(--bg);
+      overflow-x: hidden;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .app {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: .18;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob.one {
+      width: 180px;
+      height: 180px;
+      background: var(--pink);
+      top: -70px;
+      left: -70px;
+    }
+
+    .blob.two {
+      width: 230px;
+      height: 230px;
+      background: var(--blue);
+      right: -100px;
+      bottom: 10%;
+    }
+
+    .screen {
+      width: 100%;
+      max-width: 900px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      position: relative;
+      z-index: 1;
+      animation: screenIn .35s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes screenIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(.99);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* =========================
+       HEADER
+    ========================== */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .mini-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 900;
+      font-family: "Poppins", "Noto Sans Devanagari", sans-serif;
+      font-size: 16px;
+    }
+
+    .logo-dot {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: white;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 8px 20px rgba(124,58,237,.28);
+    }
+
+    .language-switcher {
+      display: inline-flex;
+      padding: 4px;
+      gap: 3px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(124,58,237,.1);
+      border-radius: 999px;
+      box-shadow: 0 5px 18px rgba(0,0,0,.06);
+      backdrop-filter: blur(12px);
+    }
+
+    .lang-btn {
+      padding: 7px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .lang-btn.active {
+      color: white;
+      background: var(--purple);
+      box-shadow: 0 4px 12px rgba(124,58,237,.25);
+    }
+
+    /* =========================
+       HOME SCREEN
+    ========================== */
+    .hero {
+      text-align: center;
+      padding: 20px 0 25px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      animation: floaty 3s ease-in-out infinite;
+    }
+
+    @keyframes floaty {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: "Poppins", "Noto Sans Devanagari", sans-serif;
+      font-size: clamp(38px, 10vw, 72px);
+      line-height: 1;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, var(--purple), var(--pink), var(--orange));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      margin: 14px auto 0;
+      max-width: 570px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .setup-card,
+    .badges-card,
+    .quiz-card,
+    .results-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(15px);
+    }
+
+    .setup-card {
+      padding: 20px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 22px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: "⌄";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-55%);
+      color: var(--purple);
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    select {
+      appearance: none;
+      width: 100%;
+      padding: 14px 45px 14px 15px;
+      border: 2px solid #eee8ff;
+      border-radius: 17px;
+      background: #faf9ff;
+      color: var(--ink);
+      font-weight: 700;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.1);
+    }
+
+    .primary-btn {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 18px;
+      color: white;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 12px 25px rgba(124,58,237,.25);
+      font-weight: 900;
+      font-size: 16px;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(124,58,237,.3);
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active,
+    .option-btn:active {
+      transform: scale(.97);
+    }
+
+    .badges-card {
+      margin-top: 18px;
+      padding: 20px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .badge-count {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f3e8ff;
+      color: var(--purple-dark);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .badge-item {
+      min-height: 100px;
+      padding: 13px 10px;
+      text-align: center;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid #eef2f7;
+      opacity: .42;
+      filter: grayscale(1);
+      transition: .25s ease;
+    }
+
+    .badge-item.unlocked {
+      opacity: 1;
+      filter: none;
+      background: linear-gradient(135deg, #fff7ed, #fdf4ff);
+      border-color: #f3e8ff;
+      animation: badgePop .5s ease;
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(.85); }
+      70% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .badge-icon {
+      font-size: 30px;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .badge-name {
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.4;
+    }
+
+    .locked-text {
+      font-size: 9px;
+      color: #9ca3af;
+      margin-top: 3px;
+    }
+
+    /* =========================
+       QUIZ SCREEN
+    ========================== */
+    .quiz-top {
+      margin-bottom: 18px;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-number {
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .streak {
+      padding: 7px 11px;
+      background: #fff7ed;
+      color: #c2410c;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      animation: streakPulse .7s ease;
+    }
+
+    @keyframes streakPulse {
+      0% { transform: scale(.8); }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      background: #e9e5f8;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--purple), var(--pink), var(--orange));
+      transition: width .4s ease;
+    }
+
+    .quiz-card {
+      padding: 22px;
+    }
+
+    .topic-pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: var(--purple-dark);
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 15px;
+    }
+
+    .question {
+      margin: 0 0 20px;
+      font-size: clamp(21px, 5.5vw, 31px);
+      line-height: 1.45;
+      font-weight: 900;
+    }
+
+    .options {
+      display: grid;
+      gap: 11px;
+    }
+
+    .option-btn {
+      width: 100%;
+      min-height: 56px;
+      padding: 12px 15px;
+      border: 2px solid #ebe7f5;
+      border-radius: 17px;
+      background: white;
+      color: var(--ink);
+      text-align: left;
+      font-weight: 800;
+      transition: .18s ease;
+    }
+
+    .option-btn:hover {
+      border-color: #c4b5fd;
+      background: #faf8ff;
+      transform: translateY(-1px);
+    }
+
+    .option-btn.correct {
+      border-color: var(--green);
+      background: #f0fdf4;
+      color: #15803d;
+      animation: correctBounce .45s ease;
+    }
+
+    .option-btn.wrong {
+      border-color: var(--red);
+      background: #fef2f2;
+      color: #b91c1c;
+      animation: shake .4s ease;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    @keyframes correctBounce {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.025); }
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-4px); }
+    }
+
+    .feedback {
+      margin-top: 17px;
+      padding: 16px;
+      border-radius: 18px;
+      animation: screenIn .3s ease;
+    }
+
+    .feedback.correct-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+
+    .feedback.wrong-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+
+    .feedback-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 16px;
+      margin-bottom: 7px;
+    }
+
+    .feedback p {
+      margin: 5px 0;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .feedback strong {
+      color: var(--purple-dark);
+    }
+
+    .quiz-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .secondary-btn {
+      flex: 1;
+      min-height: 48px;
+      border-radius: 15px;
+      background: #f3f0ff;
+      color: var(--purple-dark);
+      font-weight: 900;
+      transition: .15s ease;
+    }
+
+    .next-btn {
+      flex: 1.5;
+      min-height: 48px;
+      border-radius: 15px;
+      color: white;
+      background: var(--purple);
+      font-weight: 900;
+      transition: .15s ease;
+    }
+
+    .secondary-btn:hover,
+    .next-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .streak-message {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 13px;
+      text-align: center;
+      background: linear-gradient(135deg, #fff7ed, #fffbeb);
+      color: #c2410c;
+      font-weight: 900;
+      font-size: 13px;
+      animation: badgePop .4s ease;
+    }
+
+    /* =========================
+       RESULTS
+    ========================== */
+    .results-wrap {
+      text-align: center;
+      padding-top: 30px;
+    }
+
+    .result-emoji {
+      font-size: 62px;
+      animation: resultPop .7s ease;
+    }
+
+    @keyframes resultPop {
+      0% { transform: scale(.3) rotate(-15deg); opacity: 0; }
+      60% { transform: scale(1.15) rotate(8deg); }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .results-card {
+      padding: 28px 20px;
+    }
+
+    .results-card h1 {
+      margin: 7px 0 4px;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .score {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--purple);
+      margin: 12px 0;
+    }
+
+    .stars {
+      font-size: 34px;
+      letter-spacing: 3px;
+      margin: 8px 0 15px;
+    }
+
+    .result-message {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 auto 22px;
+      max-width: 500px;
+    }
+
+    .new-badges {
+      margin: 20px 0;
+      padding: 15px;
+      background: #faf5ff;
+      border-radius: 18px;
+      border: 1px solid #e9d5ff;
+    }
+
+    .new-badges h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .new-badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .new-badge {
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: white;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 5px 15px rgba(124,58,237,.1);
+      animation: badgePop .55s ease both;
+    }
+
+    .result-buttons {
+      display: grid;
+      gap: 10px;
+    }
+
+    /* =========================
+       CONFETTI
+    ========================== */
+    #confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 100;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -20px;
+      width: 9px;
+      height: 14px;
+      border-radius: 2px;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+    @media (min-width: 650px) {
+      .screen {
+        padding: 28px 24px 50px;
+      }
+
+      .setup-card,
+      .badges-card,
+      .quiz-card,
+      .results-card {
+        padding: 28px;
+      }
+
+      .badges-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .options {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .result-buttons {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .screen {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .hero h1 {
+        font-size: 35px;
+      }
+
+      .setup-card,
+      .quiz-card,
+      .results-card {
+        padding: 17px;
+      }
+
+      .badges-grid {
+        gap: 7px;
+      }
+
+      .badge-item {
+        padding: 10px 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+
+    <div id="confetti-container"></div>
+
+    <!-- =========================
+         HOME SCREEN
+    ========================== -->
+    <main id="homeScreen" class="screen">
+      <header class="topbar">
+        <div class="mini-logo">
+          <div class="logo-dot">SB</div>
+          <span>StudyBuddy</span>
+        </div>
+
+        <div class="language-switcher" aria-label="Language">
+          <button class="lang-btn" data-lang="hi">हिंदी</button>
+          <button class="lang-btn" data-lang="en">English</button>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-badge">✨ <span data-i18n="heroBadge"></span></div>
+        <h1>StudyBuddy Lite</h1>
+        <p data-i18n="heroText"></p>
+      </section>
+
+      <section class="setup-card">
+        <div class="field">
+          <label for="classSelect" data-i18n="selectClass"></label>
+          <div class="select-wrap">
+            <select id="classSelect">
+              <option value="1">कक्षा 1</option>
+              <option value="2">कक्षा 2</option>
+              <option value="3" selected>कक्षा 3</option>
+              <option value="4">कक्षा 4</option>
+              <option value="5">कक्षा 5</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="subjectSelect" data-i18n="selectSubject"></label>
+          <div class="select-wrap">
+            <select id="subjectSelect">
+              <option value="math" data-i18n="math"></option>
+              <option value="english" data-i18n="english"></option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="topicSelect" data-i18n="selectTopic"></label>
+          <div class="select-wrap">
+            <select id="topicSelect"></select>
+          </div>
+        </div>
+
+        <button id="startQuizBtn" class="primary-btn" data-i18n="startQuiz"></button>
+      </section>
+
+      <section class="badges-card">
+        <div class="section-heading">
+          <h2 data-i18n="badges"></h2>
+          <span id="badgeCount" class="badge-count"></span>
+        </div>
+        <div id="badgesGrid" class="badges-grid"></div>
+      </section>
+    </main>
+
+    <!-- =========================
+         QUIZ SCREEN
+    ========================== -->
+    <main id="quizScreen" class="screen hidden">
+      <header class="topbar">
+        <div class="mini-logo">
+          <div class="logo-dot">SB</div>
+          <span>StudyBuddy</span>
+        </div>
+
+        <div class="language-switcher">
+          <button class="lang-btn" data-lang="hi">हिंदी</button>
+          <button class="lang-btn" data-lang="en">English</button>
+        </div>
+      </header>
+
+      <section class="quiz-top">
+        <div class="quiz-header">
+          <span id="questionCounter" class="quiz-number"></span>
+          <span id="streakDisplay" class="streak hidden"></span>
+        </div>
+
+        <div class="progress-track">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </section>
+
+      <section class="quiz-card">
+        <div id="topicPill" class="topic-pill"></div>
+        <h2 id="questionText" class="question"></h2>
+
+        <div id="optionsContainer" class="options"></div>
+
+        <div id="feedback" class="feedback hidden"></div>
+
+        <div id="streakMessage" class="streak-message hidden"></div>
+
+        <div class="quiz-actions">
+          <button id="hintBtn" class="secondary-btn"></button>
+          <button id="nextBtn" class="next-btn hidden"></button>
+        </div>
+
+        <div id="hintBox" class="feedback hidden"></div>
+      </section>
+    </main>
+
+    <!-- =========================
+         RESULTS SCREEN
+    ========================== -->
+    <main id="resultsScreen" class="screen hidden">
+      <header class="topbar">
+        <div class="mini-logo">
+          <div class="logo-dot">SB</div>
+          <span>StudyBuddy</span>
+        </div>
+
+        <div class="language-switcher">
+          <button class="lang-btn" data-lang="hi">हिंदी</button>
+          <button class="lang-btn" data-lang="en">English</button>
+        </div>
+      </header>
+
+      <section class="results-wrap">
+        <div id="resultEmoji" class="result-emoji">🎉</div>
+
+        <div class="results-card">
+          <h1 data-i18n="quizComplete"></h1>
+          <div id="scoreText" class="score"></div>
+          <div id="stars" class="stars"></div>
+          <p id="resultMessage" class="result-message"></p>
+
+          <div id="newBadgesBox" class="new-badges hidden">
+            <h3 data-i18n="newBadges"></h3>
+            <div id="newBadgeList" class="new-badge-list"></div>
+          </div>
+
+          <div class="result-buttons">
+            <button id="playAgainBtn" class="primary-btn" data-i18n="playAgain"></button>
+            <button id="backHomeBtn" class="secondary-btn" data-i18n="backHome"></button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    /* =========================================================
+       TRANSLATIONS
+    ========================================================== */
+    const translations = {
+      hi: {
+        appTitle: "StudyBuddy Lite",
+        heroBadge: "सीखो • खेलो • लेवल अप करो",
+        heroText: "कक्षा 1–5 के लिए मज़ेदार Math और English प्रैक्टिस। तैयार हो? चलो शुरू करते हैं! 🚀",
+        selectClass: "कक्षा चुनें",
+        selectSubject: "विषय चुनें",
+        selectTopic: "टॉपिक चुनें",
+        math: "गणित",
+        english: "अंग्रेज़ी",
+        startQuiz: "शुरू करें 🚀",
+        badges: "बैज",
+        question: "प्रश्न",
+        of: "में से",
+        correct: "सही! बहुत बढ़िया! 🎉",
+        wrong: "कोई बात नहीं! 🤔",
+        explanation: "समझाओ",
+        hint: "संकेत",
+        next: "अगला प्रश्न →",
+        hideHint: "संकेत छिपाएँ",
+        streak: "लगातार",
+        correctInRow: "सही! 🔥",
+        quizComplete: "क्विज़ पूरा! 🎉",
+        score: "तुम्हारे अंक",
+        playAgain: "दोबारा खेलें",
+        backHome: "वापस होम पर जाएँ",
+        newBadges: "नए बैज अनलॉक! 🏆",
+        noBadges: "अभी कोई बैज अनलॉक नहीं हुआ",
+        locked: "लॉक है",
+        firstQuiz: "पहला क्विज़ पूरा किया",
+        tenCorrect: "10 सही जवाब एक ही बार में",
+        mathMaster: "गणित मास्टर",
+        englishPro: "अंग्रेज़ी प्रो",
+        awesome: "वाह! तुमने कमाल कर दिया! 🌟",
+        great: "बहुत बढ़िया! तुम्हारी प्रैक्टिस रंग ला रही है! 💪",
+        keepGoing: "अच्छी कोशिश! फिर से खेलो और अपना स्कोर बढ़ाओ! 🚀",
+        streakText: "लगातार {n} सही! 🔥",
+        correctAnswer: "सही जवाब",
+        topicAll: "सभी टॉपिक",
+        classLabel: "कक्षा"
+      },
+
+      en: {
+        appTitle: "StudyBuddy Lite",
+        heroBadge: "Learn • Play • Level Up",
+        heroText: "Fun Math and English practice for Classes 1–5. Ready? Let's go! 🚀",
+        selectClass: "Select Class",
+        selectSubject: "Select Subject",
+        selectTopic: "Select Topic",
+        math: "Math",
+        english: "English",
+        startQuiz: "Start Quiz 🚀",
+        badges: "Badges",
+        question: "Question",
+        of: "of",
+        correct: "Correct! Awesome! 🎉",
+        wrong: "That's okay! 🤔",
+        explanation: "Explanation",
+        hint: "Hint",
+        next: "Next Question →",
+        hideHint: "Hide Hint",
+        streak: "Streak",
+        correctInRow: "correct in a row! 🔥",
+        quizComplete: "Quiz Complete! 🎉",
+        score: "Your score",
+        playAgain: "Play Again",
+        backHome: "Back to Home",
+        newBadges: "New Badges Unlocked! 🏆",
+        noBadges: "No badges unlocked yet",
+        locked: "Locked",
+        firstQuiz: "First Quiz Completed",
+        tenCorrect: "10 Correct in One Go",
+        mathMaster: "Math Master",
+        englishPro: "English Pro",
+        awesome: "Wow! You absolutely crushed it! 🌟",
+        great: "Great job! Your practice is paying off! 💪",
+        keepGoing: "Good try! Play again and beat your score! 🚀",
+        streakText: "{n} correct in a row! 🔥",
+        correctAnswer: "Correct answer",
+        topicAll: "All Topics",
+        classLabel: "Class"
+      }
+    };
+
+    /* =========================================================
+       QUESTION DATA
+       Add more questions by copying an object and changing
+       its values. Question content is written in Hindi.
+    ========================================================== */
+    const questions = [
+
+      // ---------- MATH: ADDITION ----------
+      {
+        id: 1, class: 1, subject: "math", topic: "addition",
+        question: "5 + 3 कितना होता है?",
+        options: ["6", "7", "8", "9"],
+        answer: "8",
+        explanation: "5 में 3 जोड़ने पर 8 होता है।",
+        hint: "5 के बाद तीन गिनो।"
+      },
+      {
+        id: 2, class: 1, subject: "math", topic: "addition",
+        question: "7 + 2 कितना होता है?",
+        options: ["8", "9", "10", "11"],
+        answer: "9",
+        explanation: "7 + 2 = 9।",
+        hint: "7 के बाद दो संख्या गिनो।"
+      },
+      {
+        id: 3, class: 2, subject: "math", topic: "addition",
+        question: "24 + 15 कितना होता है?",
+        options: ["39", "38", "40", "35"],
+        answer: "39",
+        explanation: "24 + 15 = 39। पहले दहाई और फिर इकाई जोड़ सकते हैं।",
+        hint: "20 + 10 और 4 + 5 जोड़ो।"
+      },
+      {
+        id: 4, class: 3, subject: "math", topic: "addition",
+        question: "27 + 15 कितना होता है?",
+        options: ["40", "42", "32", "45"],
+        answer: "42",
+        explanation: "27 + 15 = 42। 20 + 10 = 30 और 7 + 5 = 12, इसलिए 42।",
+        hint: "पहले दहाई जोड़ो, फिर इकाई।"
+      },
+      {
+        id: 5, class: 4, subject: "math", topic: "addition",
+        question: "125 + 236 कितना होता है?",
+        options: ["351", "361", "371", "341"],
+        answer: "361",
+        explanation: "125 + 236 = 361।",
+        hint: "इकाई, दहाई और सैकड़ा अलग-अलग जोड़ो।"
+      },
+
+      // ---------- MATH: SUBTRACTION ----------
+      {
+        id: 6, class: 1, subject: "math", topic: "subtraction",
+        question: "9 - 4 कितना होता है?",
+        options: ["4", "5", "6", "7"],
+        answer: "5",
+        explanation: "9 में से 4 घटाने पर 5 बचता है।",
+        hint: "9 से चार कदम पीछे जाओ।"
+      },
+      {
+        id: 7, class: 2, subject: "math", topic: "subtraction",
+        question: "18 - 7 कितना होता है?",
+        options: ["10", "11", "12", "13"],
+        answer: "11",
+        explanation: "18 - 7 = 11।",
+        hint: "18 से सात पीछे गिनो।"
+      },
+      {
+        id: 8, class: 3, subject: "math", topic: "subtraction",
+        question: "54 - 29 कितना होता है?",
+        options: ["25", "35", "24", "23"],
+        answer: "25",
+        explanation: "54 - 29 = 25।",
+        hint: "29 में कितना जोड़ने पर 54 मिलेगा?"
+      },
+      {
+        id: 9, class: 4, subject: "math", topic: "subtraction",
+        question: "500 - 275 कितना होता है?",
+        options: ["215", "225", "235", "250"],
+        answer: "225",
+        explanation: "500 - 275 = 225।",
+        hint: "275 + 225 = 500।"
+      },
+
+      // ---------- MATH: MULTIPLICATION ----------
+      {
+        id: 10, class: 2, subject: "math", topic: "multiplication",
+        question: "3 × 4 कितना होता है?",
+        options: ["7", "10", "12", "14"],
+        answer: "12",
+        explanation: "3 × 4 का मतलब 4 को तीन बार जोड़ना है: 4 + 4 + 4 = 12।",
+        hint: "4 + 4 + 4 जोड़ो।"
+      },
+      {
+        id: 11, class: 3, subject: "math", topic: "multiplication",
+        question: "6 × 5 कितना होता है?",
+        options: ["25", "30", "35", "40"],
+        answer: "30",
+        explanation: "6 × 5 = 30।",
+        hint: "5 की तालिका याद करो।"
+      },
+      {
+        id: 12, class: 4, subject: "math", topic: "multiplication",
+        question: "12 × 4 कितना होता है?",
+        options: ["36", "42", "48", "52"],
+        answer: "48",
+        explanation: "12 × 4 = 48।",
+        hint: "12 को चार बार जोड़ो।"
+      },
+      {
+        id: 13, class: 5, subject: "math", topic: "multiplication",
+        question: "25 × 6 कितना होता है?",
+        options: ["125", "150", "175", "200"],
+        answer: "150",
+        explanation: "25 × 6 = 150।",
+        hint: "25 × 3 = 75, फिर उसे दोगुना करो।"
+      },
+
+      // ---------- MATH: WORD PROBLEMS ----------
+      {
+        id: 14, class: 2, subject: "math", topic: "word-problem",
+        question: "रिया के पास 8 आम हैं। उसे 5 और आम मिले। अब उसके पास कितने आम हैं?",
+        options: ["11", "12", "13", "14"],
+        answer: "13",
+        explanation: "8 + 5 = 13, इसलिए रिया के पास 13 आम हैं।",
+        hint: "जब चीजें बढ़ती हैं, तो जोड़ करते हैं।"
+      },
+      {
+        id: 15, class: 3, subject: "math", topic: "word-problem",
+        question: "एक डिब्बे में 20 पेंसिल थीं। 7 पेंसिल निकाल ली गईं। कितनी पेंसिल बचीं?",
+        options: ["11", "12", "13", "14"],
+        answer: "13",
+        explanation: "20 - 7 = 13, इसलिए 13 पेंसिल बचीं।",
+        hint: "निकालने का मतलब घटाना है।"
+      },
+      {
+        id: 16, class: 4, subject: "math", topic: "word-problem",
+        question: "एक कक्षा में 6 पंक्तियाँ हैं और हर पंक्ति में 5 बच्चे हैं। कुल कितने बच्चे हैं?",
+        options: ["25", "30", "35", "40"],
+        answer: "30",
+        explanation: "6 × 5 = 30, इसलिए कुल 30 बच्चे हैं।",
+        hint: "हर पंक्ति में बराबर बच्चे हैं, इसलिए गुणा करो।"
+      },
+      {
+        id: 17, class: 5, subject: "math", topic: "word-problem",
+        question: "एक किताब में 120 पृष्ठ हैं। मोहन ने 45 पृष्ठ पढ़ लिए। कितने पृष्ठ बाकी हैं?",
+        options: ["65", "70", "75", "85"],
+        answer: "75",
+        explanation: "120 - 45 = 75।",
+        hint: "कुल पृष्ठों में से पढ़े हुए पृष्ठ घटाओ।"
+      },
+
+      // ---------- MATH: MIXED ----------
+      {
+        id: 18, class: 5, subject: "math", topic: "mixed",
+        question: "एक सप्ताह में कितने दिन होते हैं?",
+        options: ["5", "6", "7", "8"],
+        answer: "7",
+        explanation: "एक सप्ताह में 7 दिन होते हैं।",
+        hint: "सोमवार से रविवार तक गिनो।"
+      },
+      {
+        id: 19, class: 4, subject: "math", topic: "mixed",
+        question: "100 में से 1 कम कितना होगा?",
+        options: ["98", "99", "101", "90"],
+        answer: "99",
+        explanation: "100 - 1 = 99।",
+        hint: "100 से एक कदम पीछे जाओ।"
+      },
+      {
+        id: 20, class: 5, subject: "math", topic: "mixed",
+        question: "10 × 10 कितना होता है?",
+        options: ["10", "20", "100", "1000"],
+        answer: "100",
+        explanation: "10 × 10 = 100।",
+        hint: "10 की 10 बार गिनती करो।"
+      },
+
+      // ---------- ENGLISH: SPELLING ----------
+      {
+        id: 21, class: 1, subject: "english", topic: "spelling",
+        question: "इनमें से 'कैट' की सही अंग्रेज़ी वर्तनी कौन-सी है?",
+        options: ["cat", "kat", "cet", "cut"],
+        answer: "cat",
+        explanation: "'कैट' की सही अंग्रेज़ी वर्तनी cat है।",
+        hint: "इस शब्द में c, a और t आते हैं।"
+      },
+      {
+        id: 22, class: 1, subject: "english", topic: "spelling",
+        question: "इनमें से 'डॉग' की सही अंग्रेज़ी वर्तनी कौन-सी है?",
+        options: ["dag", "dog", "dug", "dig"],
+        answer: "dog",
+        explanation: "'डॉग' की सही अंग्रेज़ी वर्तनी dog है।",
+        hint: "शब्द के बीच में o आता है।"
+      },
+      {
+        id: 23, class: 2, subject: "english", topic: "spelling",
+        question: "इनमें से 'स्कूल' की सही अंग्रेज़ी वर्तनी कौन-सी है?",
+        options: ["scool", "school", "skool", "schol"],
+        answer: "school",
+        explanation: "'स्कूल' की सही अंग्रेज़ी वर्तनी school है।",
+        hint: "इस शब्द की शुरुआत sch से होती है।"
+      },
+      {
+        id: 24, class: 3, subject: "english", topic: "spelling",
+        question: "इनमें से 'ब्यूटीफुल' की सही अंग्रेज़ी वर्तनी कौन-सी है?",
+        options: ["beautifull", "butiful", "beautiful", "beautifal"],
+        answer: "beautiful",
+        explanation: "Beautiful का सही रूप beautiful है।",
+        hint: "इस शब्द में beau से शुरुआत होती है।"
+      },
+      {
+        id: 25, class: 4, subject: "english", topic: "spelling",
+        question: "इनमें से 'फ्रेंड' की सही अंग्रेज़ी वर्तनी कौन-सी है?",
+        options: ["freind", "friend", "frend", "friand"],
+        answer: "friend",
+        explanation: "Friend की सही वर्तनी friend है।",
+        hint: "याद रखो: i के बाद e आता है।"
+      },
+
+      // ---------- ENGLISH: GRAMMAR ----------
+      {
+        id: 26, class: 2, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: I ___ happy.",
+        options: ["am", "is", "are", "be"],
+        answer: "am",
+        explanation: "I के साथ am का प्रयोग होता है।",
+        hint: "I के साथ हमेशा am याद रखो।"
+      },
+      {
+        id: 27, class: 2, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: She ___ my friend.",
+        options: ["am", "are", "is", "be"],
+        answer: "is",
+        explanation: "She एक व्यक्ति के लिए है, इसलिए is आएगा।",
+        hint: "She के साथ is लगता है।"
+      },
+      {
+        id: 28, class: 3, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: They ___ playing.",
+        options: ["is", "am", "are", "be"],
+        answer: "are",
+        explanation: "They के साथ are का प्रयोग होता है।",
+        hint: "They बहुवचन है।"
+      },
+      {
+        id: 29, class: 3, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: He ___ a ball.",
+        options: ["have", "has", "having", "had"],
+        answer: "has",
+        explanation: "He के साथ has का प्रयोग होता है।",
+        hint: "He, She और It के साथ has याद रखो।"
+      },
+      {
+        id: 30, class: 4, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: We ___ two books.",
+        options: ["has", "have", "is", "am"],
+        answer: "have",
+        explanation: "We के साथ have का प्रयोग होता है।",
+        hint: "We के साथ have आता है।"
+      },
+      {
+        id: 31, class: 4, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: The sun ___ bright.",
+        options: ["are", "am", "is", "be"],
+        answer: "is",
+        explanation: "The sun एकवचन है, इसलिए is आएगा।",
+        hint: "एक चीज़ के लिए is का प्रयोग करो।"
+      },
+
+      // ---------- ENGLISH: VOCABULARY ----------
+      {
+        id: 32, class: 2, subject: "english", topic: "vocabulary",
+        question: "'बड़ा' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["small", "big", "short", "thin"],
+        answer: "big",
+        explanation: "'बड़ा' का अंग्रेज़ी शब्द big है।",
+        hint: "छोटे का उल्टा सोचो।"
+      },
+      {
+        id: 33, class: 2, subject: "english", topic: "vocabulary",
+        question: "'खुश' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["sad", "angry", "happy", "slow"],
+        answer: "happy",
+        explanation: "'खुश' का अंग्रेज़ी शब्द happy है।",
+        hint: "जब तुम्हें बहुत अच्छा लगता है, तब तुम क्या होते हो?"
+      },
+      {
+        id: 34, class: 3, subject: "english", topic: "vocabulary",
+        question: "'तेज़' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["slow", "fast", "soft", "late"],
+        answer: "fast",
+        explanation: "'तेज़' का अंग्रेज़ी शब्द fast है।",
+        hint: "slow इसका उल्टा है।"
+      },
+      {
+        id: 35, class: 3, subject: "english", topic: "vocabulary",
+        question: "'सुंदर' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["ugly", "beautiful", "angry", "noisy"],
+        answer: "beautiful",
+        explanation: "'सुंदर' का अंग्रेज़ी शब्द beautiful है।",
+        hint: "यह शब्द किसी बहुत प्यारी चीज़ के लिए इस्तेमाल होता है।"
+      },
+      {
+        id: 36, class: 4, subject: "english", topic: "vocabulary",
+        question: "'शुरू करना' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["finish", "start", "sleep", "stop"],
+        answer: "start",
+        explanation: "'शुरू करना' का अंग्रेज़ी शब्द start है।",
+        hint: "किसी काम की शुरुआत करने के लिए यह शब्द आता है।"
+      },
+      {
+        id: 37, class: 5, subject: "english", topic: "vocabulary",
+        question: "'बहादुर' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["brave", "weak", "quiet", "lazy"],
+        answer: "brave",
+        explanation: "'बहादुर' का अंग्रेज़ी शब्द brave है।",
+        hint: "जो डर के बावजूद हिम्मत रखता है, वह क्या होता है?"
+      },
+
+      // ---------- ENGLISH: MIXED ----------
+      {
+        id: 38, class: 5, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: I ___ to school every day.",
+        options: ["go", "goes", "going", "gone"],
+        answer: "go",
+        explanation: "I के साथ वर्तमान काल में go का प्रयोग होता है।",
+        hint: "I के साथ क्रिया का मूल रूप आता है।"
+      },
+      {
+        id: 39, class: 5, subject: "english", topic: "grammar",
+        question: "खाली जगह भरो: Riya ___ a song every morning.",
+        options: ["sing", "sings", "singing", "sung"],
+        answer: "sings",
+        explanation: "Riya एक व्यक्ति है, इसलिए क्रिया के साथ s लगेगा: sings।",
+        hint: "एक व्यक्ति के साथ वर्तमान काल में अक्सर s लगता है।"
+      },
+      {
+        id: 40, class: 5, subject: "english", topic: "vocabulary",
+        question: "'जल्दी' का अंग्रेज़ी शब्द कौन-सा है?",
+        options: ["early", "late", "slow", "never"],
+        answer: "early",
+        explanation: "'जल्दी' के लिए early शब्द इस्तेमाल होता है।",
+        hint: "late इसका उल्टा है।"
+      }
+    ];
+
+    /* =========================================================
+       BADGES
+    ========================================================== */
+    const badgeDefinitions = [
+      {
+        id: "firstQuiz",
+        icon: "🎯",
+        hi: "पहला क्विज़ पूरा किया",
+        en: "First Quiz Completed"
+      },
+      {
+        id: "tenCorrect",
+        icon: "🔥",
+        hi: "10 सही जवाब एक ही बार में",
+        en: "10 Correct in One Go"
+      },
+      {
+        id: "mathMaster",
+        icon: "🧮",
+        hi: "गणित मास्टर",
+        en: "Math Master"
+      },
+      {
+        id: "englishPro",
+        icon: "📚",
+        hi: "अंग्रेज़ी प्रो",
+        en: "English Pro"
+      }
+    ];
+
+    /* =========================================================
+       STATE
+    ========================================================== */
+    let language = localStorage.getItem("studybuddy_language") || "hi";
+
+    let quizQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let selectedAnswer = null;
+    let quizAnswered = false;
+    let currentSettings = {
+      class: 3,
+      subject: "math",
+      topic: "all"
+    };
+
+    /* =========================================================
+       DOM REFERENCES
+    ========================================================== */
+    const homeScreen = document.getElementById("homeScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultsScreen = document.getElementById("resultsScreen");
+
+    const classSelect = document.getElementById("classSelect");
+    const subjectSelect = document.getElementById("subjectSelect");
+    const topicSelect = document.getElementById("topicSelect");
+
+    const startQuizBtn = document.getElementById("startQuizBtn");
+
+    const questionCounter = document.getElementById("questionCounter");
+    const progressFill = document.getElementById("progressFill");
+    const streakDisplay = document.getElementById("streakDisplay");
+    const topicPill = document.getElementById("topicPill");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const feedback = document.getElementById("feedback");
+    const hintBtn = document.getElementById("hintBtn");
+    const hintBox = document.getElementById("hintBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const streakMessage = document.getElementById("streakMessage");
+
+    const scoreText = document.getElementById("scoreText");
+    const stars = document.getElementById("stars");
+    const resultMessage = document.getElementById("resultMessage");
+    const resultEmoji = document.getElementById("resultEmoji");
+    const newBadgesBox = document.getElementById("newBadgesBox");
+    const newBadgeList = document.getElementById("newBadgeList");
+
+    /* =========================================================
+       UTILITY FUNCTIONS
+    ========================================================== */
+    function t(key) {
+      return translations[language][key] || key;
+    }
+
+    function applyTranslations() {
+      document.documentElement.lang = language === "hi" ? "hi" : "en";
+
+      document.querySelectorAll("[data-i18n]").forEach(element => {
+        const key = element.dataset.i18n;
+        element.textContent = t(key);
+      });
+
+      document.querySelectorAll(".lang-btn").forEach(button => {
+        button.classList.toggle("active", button.dataset.lang === language);
+      });
+
+      updateTopicOptions();
+      renderBadges();
+
+      if (!quizScreen.classList.contains("hidden")) {
+        renderQuestion();
+      }
+
+      if (!resultsScreen.classList.contains("hidden")) {
+        renderResults();
+      }
+    }
+
+    function switchLanguage(newLanguage) {
+      language = newLanguage;
+      localStorage.setItem("studybuddy_language", language);
+      applyTranslations();
+    }
+
+    function showScreen(screen) {
+      [homeScreen, quizScreen, resultsScreen].forEach(s => {
+        s.classList.add("hidden");
+      });
+
+      screen.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+
+      return copy;
+    }
+
+    /* =========================================================
+       TOPIC FILTERING
+    ========================================================== */
+    const topicNames = {
+      math: {
+        addition: { hi: "जोड़", en: "Addition" },
+        subtraction: { hi: "घटाव", en: "Subtraction" },
+        multiplication: { hi: "गुणा", en: "Multiplication" },
+        "word-problem": { hi: "शब्द प्रश्न", en: "Word Problems" },
+        mixed: { hi: "मिक्स", en: "Mixed" }
+      },
+      english: {
+        spelling: { hi: "वर्तनी", en: "Spelling" },
+        grammar: { hi: "व्याकरण", en: "Grammar" },
+        vocabulary: { hi: "शब्दावली", en: "Vocabulary" }
+      }
+    };
+
+    function updateTopicOptions() {
+      const subject = subjectSelect.value;
+      const selectedTopic = topicSelect.value;
+
+      topicSelect.innerHTML = "";
+
+      const allOption = document.createElement("option");
+      allOption.value = "all";
+      allOption.textContent = t("topicAll");
+      topicSelect.appendChild(allOption);
+
+      Object.entries(topicNames[subject]).forEach(([key, name]) => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = name[language];
+        topicSelect.appendChild(option);
+      });
+
+      if ([...topicSelect.options].some(o => o.value === selectedTopic)) {
+        topicSelect.value = selectedTopic;
+      } else {
+        topicSelect.value = "all";
+      }
+    }
+
+    /* =========================================================
+       BADGE STORAGE
+    ========================================================== */
+    function getUnlockedBadges() {
+      try {
+        return JSON.parse(localStorage.getItem("studybuddy_badges") || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveBadge(badgeId) {
+      const badges = getUnlockedBadges();
+
+      if (!badges.includes(badgeId)) {
+        badges.push(badgeId);
+        localStorage.setItem("studybuddy_badges", JSON.stringify(badges));
+        return true;
+      }
+
+      return false;
+    }
+
+    function renderBadges() {
+      const unlocked = getUnlockedBadges();
+      const grid = document.getElementById("badgesGrid");
+
+      grid.innerHTML = "";
+
+      badgeDefinitions.forEach(badge => {
+        const item = document.createElement("div");
+
+        const isUnlocked = unlocked.includes(badge.id);
+
+        item.className = "badge-item" + (isUnlocked ? " unlocked" : "");
+
+        item.innerHTML = `
+          <span class="badge-icon">${badge.icon}</span>
+          <div class="badge-name">${badge[language]}</div>
+          ${!isUnlocked ? `<div class="locked-text">🔒 ${t("locked")}</div>` : ""}
+        `;
+
+        grid.appendChild(item);
+      });
+
+      document.getElementById("badgeCount").textContent =
+        `${unlocked.length}/${badgeDefinitions.length}`;
+    }
+
+    /* =========================================================
+       QUIZ SETUP
+    ========================================================== */
+    function startQuiz() {
+      const classValue = Number(classSelect.value);
+      const subjectValue = subjectSelect.value;
+      const topicValue = topicSelect.value;
+
+      currentSettings = {
+        class: classValue,
+        subject: subjectValue,
+        topic: topicValue
+      };
+
+      /*
+        Questions are selected from the chosen class or lower
+        classes so younger/easier questions remain available.
+        This also ensures every class can access enough content.
+      */
+      let pool = questions.filter(q =>
+        q.subject === subjectValue &&
+        q.class <= classValue &&
+        (topicValue === "all" || q.topic === topicValue)
+      );
+
+      // If the exact topic has too few questions, use all subject questions.
+      if (pool.length < 5) {
+        pool = questions.filter(q =>
+          q.subject === subjectValue &&
+          q.class <= classValue
+        );
+      }
+
+      quizQuestions = shuffle(pool).slice(0, Math.min(10, pool.length));
+
+      // If somehow nothing matches, use a safe fallback.
+      if (quizQuestions.length === 0) {
+        quizQuestions = shuffle(
+          questions.filter(q => q.subject === subjectValue)
+        ).slice(0, 10);
+      }
+
+      currentQuestionIndex = 0;
+      score = 0;
+      streak = 0;
+      selectedAnswer = null;
+      quizAnswered = false;
+
+      showScreen(quizScreen);
+      renderQuestion();
+    }
+
+    /* =========================================================
+       QUIZ RENDERING
+    ========================================================== */
+    function renderQuestion() {
+      if (!quizQuestions.length) return;
+
+      const q = quizQuestions[currentQuestionIndex];
+
+      selectedAnswer = null;
+      quizAnswered = false;
+
+      questionCounter.textContent =
+        `${t("question")} ${currentQuestionIndex + 1} ${t("of")} ${quizQuestions.length}`;
+
+      progressFill.style.width =
+        `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`;
+
+      const topicName =
+        topicNames[q.subject]?.[q.topic]?.[language] ||
+        (q.subject === "math" ? t("math") : t("english"));
+
+      topicPill.textContent = topicName;
+
+      questionText.textContent = q.question;
+
+      optionsContainer.innerHTML = "";
+
+      q.options.forEach(option => {
+        const button = document.createElement("button");
+
+        button.className = "option-btn";
+        button.textContent = option;
+        button.addEventListener("click", () => selectAnswer(option, button));
+
+        optionsContainer.appendChild(button);
+      });
+
+      feedback.className = "feedback hidden";
+      feedback.innerHTML = "";
+
+      hintBox.className = "feedback hidden";
+      hintBox.innerHTML = "";
+
+      hintBtn.textContent = `💡 ${t("hint")}`;
+      nextBtn.textContent =
+        currentQuestionIndex === quizQuestions.length - 1
+          ? `${t("quizComplete")} →`
+          : t("next");
+
+      nextBtn.classList.add("hidden");
+      streakMessage.classList.add("hidden");
+
+      updateStreakDisplay();
+    }
+
+    /* =========================================================
+       ANSWER LOGIC
+    ========================================================== */
+    function selectAnswer(answer, clickedButton) {
+      if (quizAnswered) return;
+
+      quizAnswered = true;
+      selectedAnswer = answer;
+
+      const q = quizQuestions[currentQuestionIndex];
+      const optionButtons = document.querySelectorAll(".option-btn");
+
+      optionButtons.forEach(button => {
+        button.disabled = true;
+
+        if (button.textContent === q.answer) {
+          button.classList.add("correct");
+        }
+      });
+
+      if (answer === q.answer) {
+        score++;
+        streak++;
+
+        clickedButton.classList.add("correct");
+
+        feedback.className = "feedback correct-box";
+
+        feedback.innerHTML = `
+          <div class="feedback-title">${t("correct")}</div>
+          <p>${q.explanation}</p>
+        `;
+
+        if (streak >= 3) {
+          streakMessage.textContent =
+            t("streakText").replace("{n}", streak);
+
+          streakMessage.classList.remove("hidden");
+          streakDisplay.classList.remove("hidden");
+        }
+
+        if (streak >= 3) {
+          createConfetti(18);
+        }
+      } else {
+        streak = 0;
+
+        clickedButton.classList.add("wrong");
+
+        feedback.className = "feedback wrong-box";
+
+        feedback.innerHTML = `
+          <div class="feedback-title">${t("wrong")}</div>
+          <p><strong>${t("correctAnswer")}:</strong> ${q.answer}</p>
+          <p><strong>${t("explanation")}:</strong> ${q.explanation}</p>
+        `;
+      }
+
+      updateStreakDisplay();
+
+      nextBtn.classList.remove("hidden");
+    }
+
+    function updateStreakDisplay() {
+      if (streak >= 3) {
+        streakDisplay.textContent =
+          `🔥 ${t("streak")} ${streak}`;
+        streakDisplay.classList.remove("hidden");
+      } else {
+        streakDisplay.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================
+       HINT
+    ========================================================== */
+    function showHint() {
+      const q = quizQuestions[currentQuestionIndex];
+
+      if (hintBox.classList.contains("hidden")) {
+        hintBox.className = "feedback";
+        hintBox.style.background = "#eff6ff";
+        hintBox.style.borderColor = "#bfdbfe";
+
+        hintBox.innerHTML = `
+          <div class="feedback-title">💡 ${t("hint")}</div>
+          <p>${q.hint}</p>
+        `;
+
+        hintBtn.textContent = `💡 ${t("hideHint")}`;
+      } else {
+        hintBox.className = "feedback hidden";
+        hintBox.innerHTML = "";
+        hintBtn.textContent = `💡 ${t("hint")}`;
+      }
+    }
+
+    /* =========================================================
+       NEXT QUESTION
+    ========================================================== */
+    function nextQuestion() {
+      if (!quizAnswered) return;
+
+      if (currentQuestionIndex < quizQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    /* =========================================================
+       FINISH QUIZ + BADGES
+    ========================================================== */
+    function finishQuiz() {
+      const newlyUnlocked = [];
+
+      // First quiz badge.
+      if (saveBadge("firstQuiz")) {
+        newlyUnlocked.push("firstQuiz");
+      }
+
+      // 10 correct in one quiz.
+      if (score === 10 && saveBadge("tenCorrect")) {
+        newlyUnlocked.push("tenCorrect");
+      }
+
+      // Subject-specific mastery.
+      if (
+        currentSettings.subject === "math" &&
+        score >= 8 &&
+        saveBadge("mathMaster")
+      ) {
+        newlyUnlocked.push("mathMaster");
+      }
+
+      if (
+        currentSettings.subject === "english" &&
+        score >= 8 &&
+        saveBadge("englishPro")
+      ) {
+        newlyUnlocked.push("englishPro");
+      }
+
+      renderResults(newlyUnlocked);
+
+      showScreen(resultsScreen);
+
+      if (score >= 8 || newlyUnlocked.length) {
+        createConfetti(70);
+      }
+    }
+
+    /* =========================================================
+       RESULTS
+    ========================================================== */
+    function renderResults(newlyUnlocked = []) {
+      const total = quizQuestions.length;
+
+      scoreText.textContent =
+        `${t("score")}: ${score} / ${total}`;
+
+      if (score >= 9) {
+        stars.textContent = "⭐⭐⭐";
+        resultEmoji.textContent = "🏆";
+        resultMessage.textContent = t("awesome");
+      } else if (score >= 6) {
+        stars.textContent = "⭐⭐";
+        resultEmoji.textContent = "🌟";
+        resultMessage.textContent = t("great");
+      } else {
+        stars.textContent = "⭐";
+        resultEmoji.textContent = "💪";
+        resultMessage.textContent = t("keepGoing");
+      }
+
+      newBadgeList.innerHTML = "";
+
+      if (newlyUnlocked.length) {
+        newBadgesBox.classList.remove("hidden");
+
+        newlyUnlocked.forEach((id, index) => {
+          const badge = badgeDefinitions.find(b => b.id === id);
+
+          if (!badge) return;
+
+          const element = document.createElement("div");
+
+          element.className = "new-badge";
+          element.style.animationDelay = `${index * .1}s`;
+          element.textContent = `${badge.icon} ${badge[language]}`;
+
+          newBadgeList.appendChild(element);
+        });
+      } else {
+        newBadgesBox.classList.add("hidden");
+      }
+    }
+
+    /* =========================================================
+       CONFETTI
+    ========================================================== */
+    function createConfetti(amount = 50) {
+      const container = document.getElementById("confetti-container");
+
+      const symbols = ["●", "■", "◆", "★"];
+
+      for (let i = 0; i < amount; i++) {
+        const piece = document.createElement("div");
+
+        piece.className = "confetti";
+
+        piece.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.fontSize = `${8 + Math.random() * 10}px`;
+        piece.style.opacity = `${.7 + Math.random() * .3}`;
+        piece.style.animationDuration = `${1.8 + Math.random() * 2.2}s`;
+        piece.style.animationDelay = `${Math.random() * .6}s`;
+
+        // Use random HSL values instead of fixed colors.
+        piece.style.color =
+          `hsl(${Math.floor(Math.random() * 360)}, 85%, 55%)`;
+
+        container.appendChild(piece);
+
+        setTimeout(() => piece.remove(), 4500);
+      }
+    }
+
+    /* =========================================================
+       EVENT LISTENERS
+    ========================================================== */
+    document.querySelectorAll(".lang-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        switchLanguage(button.dataset.lang);
+      });
+    });
+
+    subjectSelect.addEventListener("change", updateTopicOptions);
+
+    startQuizBtn.addEventListener("click", startQuiz);
+
+    hintBtn.addEventListener("click", showHint);
+
+    nextBtn.addEventListener("click", nextQuestion);
+
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      startQuiz();
+    });
+
+    document.getElementById("backHomeBtn").addEventListener("click", () => {
+      renderBadges();
+      showScreen(homeScreen);
+    });
+
+    /* =========================================================
+       OPTIONAL: SAVE LAST SETTINGS
+    ========================================================== */
+    function saveSettings() {
+      localStorage.setItem(
+        "studybuddy_settings",
+        JSON.stringify({
+          class: classSelect.value,
+          subject: subjectSelect.value,
+          topic: topicSelect.value
+        })
+      );
+    }
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem("studybuddy_settings") || "null"
+        );
+
+        if (!saved) return;
+
+        if ([...classSelect.options].some(o => o.value === saved.class)) {
+          classSelect.value = saved.class;
+        }
+
+        if ([...subjectSelect.options].some(o => o.value === saved.subject)) {
+          subjectSelect.value = saved.subject;
+        }
+
+        updateTopicOptions();
+
+        if ([...topicSelect.options].some(o => o.value === saved.topic)) {
+          topicSelect.value = saved.topic;
+        }
+      } catch {
+        // Ignore malformed localStorage data.
+      }
+    }
+
+    classSelect.addEventListener("change", saveSettings);
+    subjectSelect.addEventListener("change", saveSettings);
+    topicSelect.addEventListener("change", saveSettings);
+
+    /* =========================================================
+       INITIALIZE APP
+    ========================================================== */
+    loadSettings();
+    updateTopicOptions();
+    applyTranslations();
+    renderBadges();
+  </script>
+</body>
+</html>
